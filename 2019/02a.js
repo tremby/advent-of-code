@@ -2,30 +2,39 @@ const assert = require('assert').strict
 
 const fs = require('fs')
 
-const ADD = 1
-const MULTIPLY = 2
-const HALT = 99
+const opcodes = {
+	ADD: 1,
+	MULTIPLY: 2,
+	HALT: 99,
+}
 
 const STEP = 4
 
-function readOpcodes() {
+function readInput() {
 	return fs.readFileSync('02.in', { encoding: 'utf8' })
 		.trim()
 		.split(',')
 		.map(num => parseInt(num, 10))
 }
 
+function withNounAndVerb(tape, noun, verb) {
+	const copy = [...tape]
+	copy[1] = noun
+	copy[2] = verb
+	return copy
+}
+
 function intcode(input) {
 	const tape = [...input]
 	for (let cursor = 0; cursor < tape.length; cursor += STEP) {
 		switch (tape[cursor]) {
-			case ADD:
+			case opcodes.ADD:
 				tape[tape[cursor + 3]] = tape[tape[cursor + 1]] + tape[tape[cursor + 2]]
 				continue
-			case MULTIPLY:
+			case opcodes.MULTIPLY:
 				tape[tape[cursor + 3]] = tape[tape[cursor + 1]] * tape[tape[cursor + 2]]
 				continue
-			case HALT:
+			case opcodes.HALT:
 				return tape
 			default:
 				throw new Error(`Unexpected opcode ${tape[cursor]} at position ${cursor}`)
@@ -42,10 +51,16 @@ if (require.main === module) {
 	assert.deepEqual(intcode([1,1,1,4,99,5,6,0,99]), [30,1,1,4,2,5,6,0,99])
 
 	// Instructions say to make some replacements before running the program
-	const input = readOpcodes()
-	input[1] = 12
-	input[2] = 2
+	const input = withNounAndVerb(readInput(), 12, 2)
 
 	// The prompt asks for the final position 0
 	console.log(intcode(input)[0])
+}
+
+module.exports = {
+	opcodes,
+	STEP,
+	readInput,
+	withNounAndVerb,
+	intcode,
 }
