@@ -89,6 +89,13 @@ function manhattanDistanceToOrigin(coords) {
 	return Math.abs(coords[0]) + Math.abs(coords[1])
 }
 
+module.exports = {
+	readInput,
+	parseInput,
+	cellsCoveredByPath,
+	getIntersections,
+}
+
 if (require.main === module) {
 	assert.equal(manhattanDistanceToOrigin([0, 0]), 0)
 	assert.equal(manhattanDistanceToOrigin([1, 0]), 1)
