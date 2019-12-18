@@ -18,6 +18,16 @@ function digitsIncreaseOrStaySame(digits) {
 	return digits.every((digit, index) => index === digits.length - 1 || digit <= digits[index + 1])
 }
 
+function getPossibilitiesCount(test, min, max) {
+	let possibilities = 0
+
+	for (let number = min; number <= max; number++) {
+		if (test(number)) possibilities++
+	}
+
+	return possibilities
+}
+
 if (require.main === module) {
 	assert.deepEqual(toDigits(1), [1])
 	assert.deepEqual(toDigits(12), [1, 2])
@@ -50,6 +60,12 @@ if (require.main === module) {
 	assert.equal(digitsIncreaseOrStaySame([0, 0, 1, 0]), false)
 	assert.equal(digitsIncreaseOrStaySame([0, 0, 1, 1, 2]), true)
 
+	assert.equal(getPossibilitiesCount(() => true, 0, 0), 1)
+	assert.equal(getPossibilitiesCount(() => false, 0, 0), 0)
+	assert.equal(getPossibilitiesCount(() => true, 0, 9), 10)
+	assert.equal(getPossibilitiesCount(() => false, 0, 9), 0)
+	assert.equal(getPossibilitiesCount((num) => num < 5, 0, 9), 5)
+
 	function matchesCriteria(number) {
 		const digits = toDigits(number)
 		return hasNDigits(digits, 6)
@@ -61,11 +77,14 @@ if (require.main === module) {
 	assert.equal(matchesCriteria(223450), false)
 	assert.equal(matchesCriteria(123789), false)
 
-	let possibilities = 0
+	console.log(getPossibilitiesCount(matchesCriteria, ...INPUT))
+}
 
-	for (let number = INPUT[0]; number <= INPUT[1]; number++) {
-		if (matchesCriteria(number)) possibilities++
-	}
-
-	console.log(possibilities)
+module.exports = {
+	INPUT,
+	toDigits,
+	hasNDigits,
+	hasAdjacentSame,
+	digitsIncreaseOrStaySame,
+	getPossibilitiesCount,
 }
