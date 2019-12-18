@@ -64,3 +64,9 @@ if (require.main === module) {
 
 	console.log(countOrbits(buildTree(parseInput(readInput()))))
 }
+
+module.exports = {
+	parseInput,
+	readInput,
+	buildTree,
+}
