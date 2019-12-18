@@ -7,6 +7,10 @@ const OPCODES = {
 	MULTIPLY: 2,
 	INPUT: 3,
 	OUTPUT: 4,
+	JUMP_IF_TRUE: 5,
+	JUMP_IF_FALSE: 6,
+	LESS_THAN: 7,
+	EQUALS: 8,
 	HALT: 99,
 }
 
@@ -82,6 +86,36 @@ function intcode(inputTape, getInput, putOutput) {
 			case OPCODES.OUTPUT: {
 				const data = getParameter(modes.pop())
 				putOutput(data)
+				break
+			}
+			case OPCODES.JUMP_IF_TRUE: {
+				const value = getParameter(modes.pop())
+				const cursorDest = getParameter(modes.pop())
+				if (value !== 0) {
+					cursor = cursorDest
+				}
+				break
+			}
+			case OPCODES.JUMP_IF_FALSE: {
+				const value = getParameter(modes.pop())
+				const cursorDest = getParameter(modes.pop())
+				if (value === 0) {
+					cursor = cursorDest
+				}
+				break
+			}
+			case OPCODES.LESS_THAN: {
+				const a = getParameter(modes.pop())
+				const b = getParameter(modes.pop())
+				const writeDest = getWriteDestinationParameter(modes.pop())
+				tape[writeDest] = a < b ? 1 : 0
+				break
+			}
+			case OPCODES.EQUALS: {
+				const a = getParameter(modes.pop())
+				const b = getParameter(modes.pop())
+				const writeDest = getWriteDestinationParameter(modes.pop())
+				tape[writeDest] = a === b ? 1 : 0
 				break
 			}
 			case OPCODES.HALT:
