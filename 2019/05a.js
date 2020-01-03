@@ -26,8 +26,7 @@ function readInput(filename) {
 		.map(num => parseInt(num, 10))
 }
 
-function intcode(inputTape, inputIterator, putOutput) {
-	const tape = [...inputTape]
+function* intcode(tape) {
 	let cursor = 0
 
 	function getInstruction() {
@@ -80,12 +79,12 @@ function intcode(inputTape, inputIterator, putOutput) {
 			}
 			case OPCODES.INPUT: {
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = inputIterator.next().value
+				tape[writeDest] = yield { type: 'INPUT' }
 				break
 			}
 			case OPCODES.OUTPUT: {
-				const data = getParameter(modes.pop())
-				putOutput(data)
+				const out = getParameter(modes.pop())
+				yield { type: 'OUTPUT', value: out }
 				break
 			}
 			case OPCODES.JUMP_IF_TRUE: {
@@ -119,7 +118,7 @@ function intcode(inputTape, inputIterator, putOutput) {
 				break
 			}
 			case OPCODES.HALT:
-				return tape
+				return
 
 			default:
 				throw new Error(`Unexpected opcode ${tape[cursor]} at position ${cursor}`)
@@ -129,20 +128,49 @@ function intcode(inputTape, inputIterator, putOutput) {
 }
 
 if (require.main === module) {
-	assert.deepEqual(intcode([1,9,10,3,2,3,11,0,99,30,40,50]), [3500,9,10,70,2,3,11,0,99,30,40,50])
-	assert.deepEqual(intcode([1,0,0,0,99]), [2,0,0,0,99])
-	assert.deepEqual(intcode([2,3,0,3,99]), [2,3,0,6,99])
-	assert.deepEqual(intcode([2,4,4,5,99,0]), [2,4,4,5,99,9801])
-	assert.deepEqual(intcode([1,1,1,4,99,5,6,0,99]), [30,1,1,4,2,5,6,0,99])
+	let tape, outputs, computer
 
-	let out1 = null
-	assert.deepEqual(intcode([3,0,4,0,099], [33][Symbol.iterator](), (x => out1 = x)), [33,0,4,0,99])
-	assert.equal(out1, 33)
+	tape = [1,9,10,3,2,3,11,0,99,30,40,50]
+	computer = intcode(tape)
+	outputs = [...computer]
+	assert.deepEqual(tape, [3500,9,10,70,2,3,11,0,99,30,40,50])
+	assert.deepEqual(outputs, [])
 
-	assert.deepEqual(intcode([1002,4,3,4,33]), [1002,4,3,4,99])
+	tape = [1,0,0,0,99]
+	outputs = [...intcode(tape)]
+	assert.deepEqual(tape, [2,0,0,0,99])
+	assert.deepEqual(outputs, [])
 
-	const outputs = []
-	intcode(readInput('05.in'), [1][Symbol.iterator](), (x) => outputs.push(x))
+	tape = [2,3,0,3,99]
+	outputs = [...intcode(tape)]
+	assert.deepEqual(tape, [2,3,0,6,99])
+	assert.deepEqual(outputs, [])
+
+	tape = [2,4,4,5,99,0]
+	outputs = [...intcode(tape)]
+	assert.deepEqual(tape, [2,4,4,5,99,9801])
+	assert.deepEqual(outputs, [])
+
+	tape = [1,1,1,4,99,5,6,0,99]
+	outputs = [...intcode(tape)]
+	assert.deepEqual(tape, [30,1,1,4,2,5,6,0,99])
+	assert.deepEqual(outputs, [])
+
+	tape = [3,0,4,0,099]
+	computer = intcode(tape)
+	assert.deepEqual(computer.next(), { done: false, value: { type: 'INPUT' } })
+	outputs = [computer.next(33), ...computer]
+	assert.deepEqual(tape, [33,0,4,0,99])
+	assert.deepEqual(outputs, [{ done: false, value: { type: 'OUTPUT', value: 33 } }])
+
+	tape = [1002,4,3,4,33]
+	outputs = [...intcode(tape)]
+	assert.deepEqual(tape, [1002,4,3,4,99])
+	assert.deepEqual(outputs, [])
+
+	computer = intcode(readInput('05.in'))
+	computer.next()
+	outputs = [computer.next(1).value, ...computer].map(out => out.value)
 	const diagnosticCode = outputs.pop()
 	if (outputs.some(diff => diff !== 0)) {
 		console.warn("Got non-zero outputs before diagnostic code")

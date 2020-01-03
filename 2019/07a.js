@@ -32,9 +32,10 @@ function findHighestSignal(program) {
 	let bestOutput = -Infinity
 	for (const phaseSequence of permutations([...Array(5).keys()])) {
 		const output = phaseSequence.reduce((input, phase) => {
-			let out = null
-			intcode(program, [phase, input][Symbol.iterator](), (x) => out = x)
-			return out
+			const amp = intcode([...program])
+			amp.next()
+			amp.next(phase)
+			return amp.next(input).value.value
 		}, 0)
 		if (output > bestOutput) {
 			bestOutput = output
@@ -61,4 +62,8 @@ if (require.main === module) {
 	]), { signal: 65210, phaseSequence: [1,0,4,3,2] })
 
 	console.log(findHighestSignal(readInput('07.in')).signal)
+}
+
+module.exports = {
+	permutations,
 }
