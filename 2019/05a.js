@@ -19,8 +19,8 @@ const MODES = {
 	IMMEDIATE: 1,
 }
 
-function readInput() {
-	return fs.readFileSync('05.in', { encoding: 'utf8' })
+function readInput(filename) {
+	return fs.readFileSync(filename, { encoding: 'utf8' })
 		.trim()
 		.split(',')
 		.map(num => parseInt(num, 10))
@@ -142,7 +142,7 @@ if (require.main === module) {
 	assert.deepEqual(intcode([1002,4,3,4,33]), [1002,4,3,4,99])
 
 	const outputs = []
-	intcode(readInput(), [1][Symbol.iterator](), (x) => outputs.push(x))
+	intcode(readInput('05.in'), [1][Symbol.iterator](), (x) => outputs.push(x))
 	const diagnosticCode = outputs.pop()
 	if (outputs.some(diff => diff !== 0)) {
 		console.warn("Got non-zero outputs before diagnostic code")

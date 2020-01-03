@@ -88,7 +88,7 @@ if (require.main === module) {
 	assert.equal(testRange(10), 1001)
 
 	const outputs = []
-	intcode(readInput(), [5][Symbol.iterator](), (x) => outputs.push(x))
+	intcode(readInput('05.in'), [5][Symbol.iterator](), (x) => outputs.push(x))
 	const diagnosticCode = outputs.pop()
 	if (outputs.some(diff => diff !== 0)) {
 		console.warn("Got non-zero outputs before diagnostic code")
