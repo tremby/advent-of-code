@@ -8,7 +8,7 @@ const {
 if (require.main === module) {
 	function isEqualTo8Position(input) {
 		let out = null
-		intcode([3,9,8,9,10,9,4,9,99,-1,8], () => input, (x) => out = x)
+		intcode([3,9,8,9,10,9,4,9,99,-1,8], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(isEqualTo8Position(0), 0)
@@ -18,7 +18,7 @@ if (require.main === module) {
 
 	function isLessThan8Position(input) {
 		let out = null
-		intcode([3,9,7,9,10,9,4,9,99,-1,8], () => input, (x) => out = x)
+		intcode([3,9,7,9,10,9,4,9,99,-1,8], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(isLessThan8Position(0), 1)
@@ -29,7 +29,7 @@ if (require.main === module) {
 
 	function isEqualTo8Immediate(input) {
 		let out = null
-		intcode([3,3,1108,-1,8,3,4,3,99], () => input, (x) => out = x)
+		intcode([3,3,1108,-1,8,3,4,3,99], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(isEqualTo8Immediate(0), 0)
@@ -39,7 +39,7 @@ if (require.main === module) {
 
 	function isLessThan8Immediate(input) {
 		let out = null
-		intcode([3,3,1107,-1,8,3,4,3,99], () => input, (x) => out = x)
+		intcode([3,3,1107,-1,8,3,4,3,99], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(isLessThan8Immediate(0), 1)
@@ -50,7 +50,7 @@ if (require.main === module) {
 
 	function isNonZeroPosition(input) {
 		let out = null
-		intcode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], () => input, (x) => out = x)
+		intcode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(isNonZeroPosition(-1), 1)
@@ -59,7 +59,7 @@ if (require.main === module) {
 
 	function isNonZeroImmediate(input) {
 		let out = null
-		intcode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], () => input, (x) => out = x)
+		intcode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(isNonZeroImmediate(-1), 1)
@@ -72,7 +72,7 @@ if (require.main === module) {
 			3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
 			1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,
 			1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99
-		], () => input, (x) => out = x)
+		], [input][Symbol.iterator](), (x) => out = x)
 		return out
 	}
 	assert.equal(testRange(-10), 999)
@@ -88,7 +88,7 @@ if (require.main === module) {
 	assert.equal(testRange(10), 1001)
 
 	const outputs = []
-	intcode(readInput(), () => 5, (x) => outputs.push(x))
+	intcode(readInput(), [5][Symbol.iterator](), (x) => outputs.push(x))
 	const diagnosticCode = outputs.pop()
 	if (outputs.some(diff => diff !== 0)) {
 		console.warn("Got non-zero outputs before diagnostic code")

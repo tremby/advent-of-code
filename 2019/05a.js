@@ -26,7 +26,7 @@ function readInput() {
 		.map(num => parseInt(num, 10))
 }
 
-function intcode(inputTape, getInput, putOutput) {
+function intcode(inputTape, inputIterator, putOutput) {
 	const tape = [...inputTape]
 	let cursor = 0
 
@@ -80,7 +80,7 @@ function intcode(inputTape, getInput, putOutput) {
 			}
 			case OPCODES.INPUT: {
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = getInput()
+				tape[writeDest] = inputIterator.next().value
 				break
 			}
 			case OPCODES.OUTPUT: {
@@ -136,13 +136,13 @@ if (require.main === module) {
 	assert.deepEqual(intcode([1,1,1,4,99,5,6,0,99]), [30,1,1,4,2,5,6,0,99])
 
 	let out1 = null
-	assert.deepEqual(intcode([3,0,4,0,099], () => 33, (x => out1 = x)), [33,0,4,0,99])
+	assert.deepEqual(intcode([3,0,4,0,099], [33][Symbol.iterator](), (x => out1 = x)), [33,0,4,0,99])
 	assert.equal(out1, 33)
 
 	assert.deepEqual(intcode([1002,4,3,4,33]), [1002,4,3,4,99])
 
 	const outputs = []
-	intcode(readInput(), () => 1, (x) => outputs.push(x))
+	intcode(readInput(), [1][Symbol.iterator](), (x) => outputs.push(x))
 	const diagnosticCode = outputs.pop()
 	if (outputs.some(diff => diff !== 0)) {
 		console.warn("Got non-zero outputs before diagnostic code")
