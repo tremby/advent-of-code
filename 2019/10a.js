@@ -20,6 +20,9 @@ function greatestCommonDivisor(a, b) {
 }
 
 function reduceFraction([numerator, denominator]) {
+	if (numerator === 0 && denominator === 0) return [0, 0]
+	if (numerator === 0) return [0, denominator / Math.abs(denominator)]
+	if (denominator === 0) return [numerator / Math.abs(numerator), 0]
 	const gcd = Math.abs(greatestCommonDivisor(numerator, denominator))
 	return [numerator / gcd, denominator / gcd]
 }
@@ -135,6 +138,12 @@ if (require.main === module) {
 	assert.deepEqual(reduceFraction([-1, 4]), [-1, 4])
 	assert.deepEqual(reduceFraction([1, -4]), [1, -4])
 	assert.deepEqual(reduceFraction([-1, -4]), [-1, -4])
+	assert.deepEqual(reduceFraction([0, 0]), [0, 0])
+	assert.deepEqual(reduceFraction([0, 4]), [0, 1])
+	assert.deepEqual(reduceFraction([4, 0]), [1, 0])
+	assert.deepEqual(reduceFraction([0, -4]), [0, -1])
+	assert.deepEqual(reduceFraction([-4, 0]), [-1, 0])
+	assert.deepEqual(reduceFraction([-4, -4]), [-1, -1])
 
 	assert.deepEqual(offset([0, 0], [0, 0]), [0, 0])
 	assert.deepEqual(offset([0, 0], [1, 1]), [1, 1])
