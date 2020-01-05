@@ -1,9 +1,10 @@
 const assert = require('assert').strict
 
-const fs = require('fs')
+const {
+	readFile,
+} = require('./util.js')
 
-const moduleMasses = fs.readFileSync('01.in', { encoding: 'utf8' })
-	.trim()
+const moduleMasses = readFile('01.in')
 	.split('\n')
 	.map(num => parseInt(num, 10))
 

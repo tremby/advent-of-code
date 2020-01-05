@@ -1,6 +1,8 @@
 const assert = require('assert').strict
 
-const fs = require('fs')
+const {
+	readFile,
+} = require('./util.js')
 
 function stringToPixels(string) {
 	return string
@@ -29,7 +31,7 @@ function getValueCount(value, pixels) {
 }
 
 function getInput() {
-	return fs.readFileSync('08.in', { encoding: 'utf8' })
+	return readFile('08.in')
 }
 
 if (require.main === module) {

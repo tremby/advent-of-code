@@ -1,6 +1,8 @@
 const assert = require('assert').strict
 
-const fs = require('fs')
+const {
+	readFile,
+} = require('./util.js')
 
 function parseInput(input) {
 	return input
@@ -10,7 +12,7 @@ function parseInput(input) {
 }
 
 function readInput() {
-	return fs.readFileSync('06.in', { encoding: 'utf8' })
+	return readFile('06.in')
 }
 
 function buildTree(orbits) {

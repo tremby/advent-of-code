@@ -3,7 +3,7 @@ const assert = require('assert').strict
 const {
 	readInput,
 	intcode,
-} = require('./05a.js')
+} = require('./intcode.js')
 
 const {
 	permutations,
@@ -69,5 +69,10 @@ if (require.main === module) {
 		53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10
 	]), { signal: 18216, phaseSequence: [9,7,8,5,6] })
 
-	console.log(findHighestSignal(readInput('07.in')).signal)
+	const highestSignal = findHighestSignal(readInput('07.in')).signal
+	console.log(highestSignal)
+
+	// Now that the correct answer has been confirmed,
+	// make sure we don't break something in future
+	assert.equal(highestSignal, 22476942)
 }

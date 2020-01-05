@@ -1,6 +1,8 @@
 const assert = require('assert').strict
 
-const fs = require('fs')
+const {
+	readFile,
+} = require('./util.js')
 
 const U = 'U'
 const D = 'D'
@@ -8,7 +10,7 @@ const L = 'L'
 const R = 'R'
 
 function readInput() {
-	return fs.readFileSync('03.in', { encoding: 'utf8' })
+	return readFile('03.in')
 }
 
 function parseInput(string) {
