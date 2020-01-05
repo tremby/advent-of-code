@@ -30,6 +30,7 @@ function* intcode(tape) {
 	let cursor = 0
 
 	function readTape(pos) {
+		if (tape[pos] == null) tape[pos] = 0
 		return tape[pos]
 	}
 
