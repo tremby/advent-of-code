@@ -63,10 +63,15 @@ function* intcode(tape) {
 		}
 	}
 
-	function getWriteDestinationParameter(mode) {
-		if (mode === MODES.IMMEDIATE)
-			throw new Error(`Got immediate parameter mode for write destination parameter at position ${cursor}`)
-		return getRawParameter()
+	function getWriteDestinationParameter(mode = MODES.POSITION) {
+		switch (mode) {
+			case MODES.POSITION:
+				return getRawParameter()
+			case MODES.IMMEDIATE:
+				throw new Error(`Got immediate parameter mode for write destination parameter at position ${cursor}`)
+			default:
+				throw new Error(`Got unexpected parameter mode ${mode} for parameter at position ${cursor}`)
+		}
 	}
 
 	while (cursor < tape.length) {
