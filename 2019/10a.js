@@ -307,3 +307,16 @@ if (require.main === module) {
 	// make sure we don't break something in future
 	assert.deepEqual(result, { coords: [11, 11], seenCount: 221 })
 }
+
+module.exports = {
+	EMPTY,
+	ASTEROID,
+	reduceFraction,
+	hashable,
+	getDimensions,
+	stringToGrid,
+	offset,
+	equal,
+	cellAt,
+	look,
+}
