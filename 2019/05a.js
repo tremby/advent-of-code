@@ -29,8 +29,16 @@ function readInput(filename) {
 function* intcode(tape) {
 	let cursor = 0
 
+	function readTape(pos) {
+		return tape[pos]
+	}
+
+	function writeTape(pos, value) {
+		tape[pos] = value
+	}
+
 	function getInstruction() {
-		const instruction = tape[cursor++]
+		const instruction = readTape(cursor++)
 		const opcode = instruction % 100
 		const modes = Math.floor(instruction / 100).toString().split('').map(modeString => parseInt(modeString, 10))
 		return {
@@ -40,13 +48,13 @@ function* intcode(tape) {
 	}
 
 	function getRawParameter() {
-		return tape[cursor++]
+		return readTape(cursor++)
 	}
 
 	function getParameter(mode = MODES.POSITION) {
 		switch (mode) {
 			case MODES.POSITION:
-				return tape[getRawParameter()]
+				return readTape(getRawParameter())
 			case MODES.IMMEDIATE:
 				return getRawParameter()
 			default:
@@ -67,19 +75,19 @@ function* intcode(tape) {
 				const augend = getParameter(modes.pop())
 				const addend = getParameter(modes.pop())
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = augend + addend
+				writeTape(writeDest, augend + addend)
 				break
 			}
 			case OPCODES.MULTIPLY: {
 				const multiplier = getParameter(modes.pop())
 				const multiplacand = getParameter(modes.pop())
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = multiplier * multiplacand
+				writeTape(writeDest, multiplier * multiplacand)
 				break
 			}
 			case OPCODES.INPUT: {
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = yield { type: 'INPUT' }
+				writeTape(writeDest, yield { type: 'INPUT' })
 				break
 			}
 			case OPCODES.OUTPUT: {
@@ -107,21 +115,21 @@ function* intcode(tape) {
 				const a = getParameter(modes.pop())
 				const b = getParameter(modes.pop())
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = a < b ? 1 : 0
+				writeTape(writeDest, a < b ? 1 : 0)
 				break
 			}
 			case OPCODES.EQUALS: {
 				const a = getParameter(modes.pop())
 				const b = getParameter(modes.pop())
 				const writeDest = getWriteDestinationParameter(modes.pop())
-				tape[writeDest] = a === b ? 1 : 0
+				writeTape(writeDest, a === b ? 1 : 0)
 				break
 			}
 			case OPCODES.HALT:
 				return
 
 			default:
-				throw new Error(`Unexpected opcode ${tape[cursor]} at position ${cursor}`)
+				throw new Error(`Unexpected opcode ${readTape(cursor)} at position ${cursor}`)
 		}
 	}
 	throw new Error("Ran out of tape without seeing HALT")
