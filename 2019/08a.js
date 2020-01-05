@@ -67,3 +67,9 @@ if (require.main === module) {
 	console.log(getValueCount(1, bestLayer) * getValueCount(2, bestLayer))
 }
 
+module.exports = {
+	getInput,
+	stringToPixels,
+	splitArray,
+	pixelsToLayers,
+}
