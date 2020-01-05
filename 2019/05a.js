@@ -11,12 +11,14 @@ const OPCODES = {
 	JUMP_IF_FALSE: 6,
 	LESS_THAN: 7,
 	EQUALS: 8,
+	RELATIVE_BASE_OFFSET: 9,
 	HALT: 99,
 }
 
 const MODES = {
 	POSITION: 0,
 	IMMEDIATE: 1,
+	RELATIVE: 2,
 }
 
 function readInput(filename) {
@@ -28,6 +30,7 @@ function readInput(filename) {
 
 function* intcode(tape) {
 	let cursor = 0
+	let relativeBase = 0
 
 	function readTape(pos) {
 		if (tape[pos] == null) tape[pos] = 0
@@ -58,6 +61,8 @@ function* intcode(tape) {
 				return readTape(getRawParameter())
 			case MODES.IMMEDIATE:
 				return getRawParameter()
+			case MODES.RELATIVE:
+				return readTape(getRawParameter() + relativeBase)
 			default:
 				throw new Error(`Got unexpected parameter mode ${mode} for parameter at position ${cursor}`)
 		}
@@ -69,6 +74,8 @@ function* intcode(tape) {
 				return getRawParameter()
 			case MODES.IMMEDIATE:
 				throw new Error(`Got immediate parameter mode for write destination parameter at position ${cursor}`)
+			case MODES.RELATIVE:
+				return getRawParameter() + relativeBase
 			default:
 				throw new Error(`Got unexpected parameter mode ${mode} for parameter at position ${cursor}`)
 		}
@@ -129,6 +136,11 @@ function* intcode(tape) {
 				const b = getParameter(modes.pop())
 				const writeDest = getWriteDestinationParameter(modes.pop())
 				writeTape(writeDest, a === b ? 1 : 0)
+				break
+			}
+			case OPCODES.RELATIVE_BASE_OFFSET: {
+				const offset = getParameter(modes.pop())
+				relativeBase += offset
 				break
 			}
 			case OPCODES.HALT:
